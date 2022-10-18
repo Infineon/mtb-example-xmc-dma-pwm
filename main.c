@@ -41,25 +41,27 @@
 /*******************************************************************************
  * Include header files
  ******************************************************************************/
+ 
 #include "cybsp.h"
 #include "cy_utils.h"
 #include "xmc_dma.h"
 #include "xmc_ccu4.h"
 
-
 /*******************************************************************************
 * Macros
 *******************************************************************************/
-#define BLOCK_SIZE 48
-#define GPDMA_CHANNEL0 0    /* DMA Channel 0 */
-#define GPDMA_CHANNEL1 1    /* DMA Channel 1 */
-#define TIMER_PERIOD 65535
-#define COMPARE_BLOCK TIMER_PERIOD/BLOCK_SIZE
+
+#define BLOCK_SIZE        48
+#define GPDMA_CHANNEL0    0    /* DMA Channel 0 */
+#define GPDMA_CHANNEL1    1    /* DMA Channel 1 */
+#define TIMER_PERIOD      65535
+#define COMPARE_BLOCK     TIMER_PERIOD/BLOCK_SIZE
 
 
 /*******************************************************************************
 * Variables
 *******************************************************************************/
+
 uint32_t shadow_transfer_enable;
 uint32_t duty_cycles[2][BLOCK_SIZE];
 
@@ -113,10 +115,10 @@ __attribute__((aligned(32))) XMC_DMA_LLI_t dma_ll[2] =
 
 /* DMA channel configuration used to transfer duty cycles using a linked list to
  * achieve double buffering.
- * - The linked list pointer points to the created DMA linked list, dma_ll in 
+ * - The linked list pointer points to the created DMA linked list, dma_ll in
  *   this case.
  * - Transfer type is source address linked destination address linked
- * - The destination address handshaking is hardware as the CCU4 peripheral 
+ * - The destination address handshaking is hardware as the CCU4 peripheral
  *   instructs the GPDMA to transfer data.
  * - The destination peripheral request is mapped to CCU40
  * - Priority level is set to low priority in this case - lower number equals
@@ -135,16 +137,16 @@ XMC_DMA_CH_CONFIG_t dma_ch0_config =
 };
 
 /* DMA channel used to transfer the shadow transfer request. The shadow transfer
- * register needs to be set after every write to shadow register for the compare 
+ * register needs to be set after every write to shadow register for the compare
  * value to be updated.
  * - The source address is the variable to set the shadow transfer bit in the CCU4
  *   register and the destination is the GCSS register of the CCU40 peripheral.
- * - The source and destination count mode requires no change since the same 
+ * - The source and destination count mode requires no change since the same
  *   data location is written everytime.
- * - The transfer type in this case is reload since we need the same 
- *   configuration after every DMA transfer. 
+ * - The transfer type in this case is reload since we need the same
+ *   configuration after every DMA transfer.
  * - The destination handshake is hardware and the peripheral request is mapped
- *   to CCU40 peripheral. 
+ *   to CCU40 peripheral.
  */
 XMC_DMA_CH_CONFIG_t dma_ch1_config =
 {
