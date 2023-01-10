@@ -2,12 +2,16 @@
 
 This code example demonstrates the use of DMA double buffering with the PWM block. DMA writes to the compare register of the PWM to obtain a varying duty cycle at the output. Two buffers are present to provide an increasing duty cycle in one and a decreasing duty cycle in the other.
 
+[View this README on GitHub.](https://github.com/Infineon/mtb-example-xmc-dma-pwm)
+
+[Provide feedback on this code example.](https://cypress.co1.qualtrics.com/jfe/form/SV_1NTns53sK2yiljn?Q_EED=eyJVbmlxdWUgRG9jIElkIjoiQ0UyMzI2OTAiLCJTcGVjIE51bWJlciI6IjAwMi0zMjY5MCIsIkRvYyBUaXRsZSI6IlhNQyZ0cmFkZTsgTUNVOiBETUEgUFdNIiwicmlkIjoiYWhhciIsIkRvYyB2ZXJzaW9uIjoiMi4xLjAiLCJEb2MgTGFuZ3VhZ2UiOiJFbmdsaXNoIiwiRG9jIERpdmlzaW9uIjoiTUNEIiwiRG9jIEJVIjoiSUNXIiwiRG9jIEZhbWlseSI6Ik4vQSJ9)
+
 ## Requirements
 
-- [ModusToolbox&trade; software](https://www.cypress.com/products/modustoolbox-software-environment) v3.0
+- [ModusToolbox&trade; software](https://www.infineon.com/modustoolbox) v3.0
 - [SEGGER J-Link software](https://www.segger.com/downloads/jlink/#J-LinkSoftwareAndDocumentationPack)
 - Programming language: C
-- Associated parts: All [XMC™ MCU](https://www.infineon.com/cms/en/product/microcontroller/32-bit-industrial-microcontroller-based-on-arm-cortex-m/) parts
+- Associated parts: All [XMC&trade; MCU](https://www.infineon.com/cms/en/product/microcontroller/32-bit-industrial-microcontroller-based-on-arm-cortex-m/) parts
 
 ## Supported toolchains (make variable 'TOOLCHAIN')
 
@@ -18,6 +22,11 @@ This code example demonstrates the use of DMA double buffering with the PWM bloc
 ## Supported kits (make variable 'TARGET')
 
 - [XMC4700 relax kit](https://www.infineon.com/cms/en/product/evaluation-boards/kit_xmc47_relax_v1/) (`KIT_XMC47_RELAX_V1`) - Default value of `TARGET`
+- [XMC4200 Platform2Go kit](https://www.infineon.com/cms/en/product/evaluation-boards/kit_xmc_plt2go_xmc4200/) (`KIT_XMC_PLT2GO_XMC4200`)
+- [XMC4300 relax EtherCAT kit](https://www.infineon.com/cms/en/product/evaluation-boards/kit_xmc43_relax_ecat_v1/) (`KIT_XMC43_RELAX_ECAT_V1`)
+- [XMC4400 Platform2Go kit](https://www.infineon.com/cms/en/product/evaluation-boards/kit_xmc_plt2go_xmc4400/) (`KIT_XMC_PLT2GO_XMC4400`)
+- [XMC4500 relax kit](https://www.infineon.com/cms/en/product/evaluation-boards/kit_xmc45_relax_v1/) (`KIT_XMC45_RELAX_V1`)
+- [XMC4800 relax EtherCAT kit](https://www.infineon.com/cms/en/product/evaluation-boards/kit_xmc48_relax_ecat_v1/) (`KIT_XMC48_RELAX_ECAT_V1`)
 
 ## Hardware setup
 
@@ -31,13 +40,13 @@ This example requires no additional software or tools.
 
 Create the project and open it using one of the following:
 
-<details open><summary><b>In Eclipse IDE for ModusToolbox&trade; software</b></summary>
+<details><summary><b>In Eclipse IDE for ModusToolbox&trade; software</b></summary>
 
-1. Click the **New Application** link in the **Quick Panel** (or, use **File** > **New** > **ModusToolbox Application**). This launches the [Project Creator](https://www.cypress.com/ModusToolboxProjectCreator) tool.
+1. Click the **New Application** link in the **Quick Panel** (or, use **File** > **New** > **ModusToolbox&trade; Application**). This launches the [Project Creator](https://www.infineon.com/ModusToolboxProjectCreator) tool.
 
 2. Pick a kit supported by the code example from the list shown in the **Project Creator - Choose Board Support Package (BSP)** dialog.
 
-   When you select a supported kit, the example is reconfigured automatically to work with the kit. To work with a different supported kit later, use the [Library Manager](https://www.cypress.com/ModusToolboxLibraryManager) to choose the BSP for the supported kit. You can use the Library Manager to select or update the BSP and firmware libraries used in this application. To access the Library Manager, click the link from the **Quick Panel**.
+   When you select a supported kit, the example is reconfigured automatically to work with the kit. To work with a different supported kit later, use the [Library Manager](https://www.infineon.com/ModusToolboxLibraryManager) to choose the BSP for the supported kit. You can use the Library Manager to select or update the BSP and firmware libraries used in this application. To access the Library Manager, click the link from the **Quick Panel**.
 
    You can also just start the application creation process again and select a different kit.
 
@@ -51,17 +60,17 @@ Create the project and open it using one of the following:
 
 6. Click **Create** to complete the application creation process.
 
-For more details, see the [Eclipse IDE for ModusToolbox&trade; software user guide](https://www.cypress.com/MTBEclipseIDEUserGuide) (locally available at *{ModusToolbox&trade; software install directory}/ide_{version}/docs/mt_ide_user_guide.pdf*).
+For more details, see the [Eclipse IDE for ModusToolbox&trade; software user guide](https://www.infineon.com/MTBEclipseIDEUserGuide) (locally available at *{ModusToolbox&trade; software install directory}/docs_{version}/mt_ide_user_guide.pdf*).
 
 </details>
 
-<details open><summary><b>In command-line interface (CLI)</b></summary>
+<details><summary><b>In command-line interface (CLI)</b></summary>
 
 ModusToolbox&trade; software provides the Project Creator as both a GUI tool and the command line tool, "project-creator-cli". The CLI tool can be used to create applications from a CLI terminal or from within batch files or shell scripts. This tool is available in the *{ModusToolbox&trade; software install directory}/tools_{version}/project-creator/* directory.
 
 Use a CLI terminal to invoke the "project-creator-cli" tool. On Windows, use the command line "modus-shell" program provided in the ModusToolbox&trade; software installation instead of a standard Windows command-line application. This shell provides access to all ModusToolbox&trade; software tools. You can access it by typing `modus-shell` in the search box in the Windows menu. In Linux and macOS, you can use any terminal application.
 
-This tool has the following arguments:
+The "project-creator-cli" tool has the following arguments:
 
 Argument | Description | Required/optional
 ---------|-------------|-----------
@@ -78,19 +87,19 @@ The following example will clone the "[DMA PWM](https://github.com/Infineon/mtb-
    project-creator-cli --board-id KIT_XMC47_RELAX_V1 --app-id mtb-example-xmc-dma-pwm --user-app-name MyDmaPWM --target-dir "C:/mtb_projects"
    ```
 
-**Note:** The project-creator-cli tool uses the `git clone` and `make getlibs` commands to fetch the repository and import the required libraries. For details, see the "Project creator tools" section of the [ModusToolbox&trade; software user guide](https://www.cypress.com/ModusToolboxUserGuide) (locally available at *{ModusToolbox&trade; software install directory}/docs_{version}/mtb_user_guide.pdf*).
+**Note:** The project-creator-cli tool uses the `git clone` and `make getlibs` commands to fetch the repository and import the required libraries. For details, see the "Project creator tools" section of the [ModusToolbox&trade; software user guide](https://www.infineon.com/ModusToolboxUserGuide) (locally available at *{ModusToolbox&trade; software install directory}/docs_{version}/mtb_user_guide.pdf*).
 
 </details>
 
-<details open><summary><b>In Third-party IDEs</b></summary>
+<details open><summary><b>In third-party IDEs</b></summary>
 
-**Note:** Only VS Code is supported.
+**Note:** Only VS code is supported.
 
 1. Follow the instructions from the **In command-line interface (CLI)** section to create the application, and import the libraries using the `make getlibs` command.
 
 2. Export the application to a supported IDE using the `make <ide>` command.
 
-   For a list of supported IDEs and more details, see the "Exporting to IDEs" section of the [ModusToolbox&trade; software user guide](https://www.cypress.com/ModusToolboxUserGuide) (locally available at *{ModusToolbox&trade; software install directory}/docs_{version}/mtb_user_guide.pdf*).
+   For a list of supported IDEs and more details, see the "Exporting to IDEs" section of the [ModusToolbox&trade; software user guide](https://www.infineon.com/ModusToolboxUserGuide) (locally available at *{ModusToolbox&trade; software install directory}/docs_{version}/mtb_user_guide.pdf*).
 
 3. Follow the instructions displayed in the terminal to create or import the application as an IDE project.
 
@@ -106,7 +115,7 @@ The following example will clone the "[DMA PWM](https://github.com/Infineon/mtb-
 
    2. In the **Quick Panel**, scroll down, and click **\<Application Name> Program (JLink)**.
 
-3. Observe the signal at pin corresponding to the kit. See Table 1 for details on pin assignment. The signal should resemble the one shown in Figure 1:
+3. Observe the signal at pin corresponding to the kit. See **Table 1** for details on pin assignment. The signal should resemble the one shown in **Figure 1**.
 
    **Figure 1. PWM signal**
 
@@ -117,22 +126,27 @@ The following example will clone the "[DMA PWM](https://github.com/Infineon/mtb-
    Kit                        | Pin
    ---------------------------|-----------
    XMC4700 relax kit          | P0.15
+   XMC4200 Platform2Go kit    | P1.3
+   XMC4300 relax EtherCAT kit | P2.5
+   XMC4400 Platform2Go kit    | P1.3
+   XMC4500 relax kit          | P1.3
+   XMC4800 relax EtherCAT kit | P0.15
 
 ## Debugging
 
-You can debug the example to step through the code. In the IDE, use the **\<Application Name> Debug (JLink)** configuration in the **Quick Panel**. For more details, see the "Program and Debug" section in the [Eclipse IDE for ModusToolbox User Guide](https://www.cypress.com/MTBEclipseIDEUserGuide).
+You can debug the example to step through the code. In the IDE, use the **\<Application Name> Debug (JLink)** configuration in the **Quick Panel**. For more details, see the "Program and debug" section in the [Eclipse IDE for ModusToolbox&trade; software user guide](https://www.infineon.com/MTBEclipseIDEUserGuide).
 
-## Design and Implementation
+## Design and implementation
 
 In this project, the GPDMA is used to configure the compare register of the capture and compare unit 4 (CCU4) peripheral to obtain a waveform with varying duty cycles. DMA double buffering is used with the help of linked-list pointers. Two linked-list pointers, one with an increasing duty cycle and the other with a decreasing duty cycle, are used in this example. These values are written to the CRS register of the CCU4.
 
-A second channel of the DMA is used to write to the shadow transfer register. Write a logic HIGH to the shadow transfer register to allow the new compare value to be loaded. Figure 2 shows the timing diagram for this operation.
+A second channel of the DMA is used to write to the shadow transfer register. Write a logic HIGH to the shadow transfer register to allow the new compare value to be loaded. **Figure 2** shows the timing diagram for this operation.
 
 **Figure 2. Timing diagram**
 
 ![](images/timing_example.png)
 
-This project uses a custom *design.modus* file that is used to configure the CCU4 peripheral. The following changes are made in the *design.modus* file:
+This project uses a custom *design.modus* file that is used to configure the CCU4 peripheral. The following changes are made in the *design.modus* file as shown in **Figure 3**.
 
 
 **Figure 3. CCU4 settings**
@@ -148,17 +162,17 @@ Resources  | Links
 -----------|----------------------------------
 Application notes  | [IP_CCU4_XMC-TR](https://www.infineon.com/dgdl/Infineon-IP_CCU4_XMC-TR-v01_02-EN.pdf?fileId=5546d4624ad04ef9014b0780bb082263) – Capture compare unit 4 (CCU4) - Provides an overview of the CCU4 module <br> [AP32287](https://www.infineon.com/dgdl/Infineon-CCU4-XMC1000_XMC4000-AP32287-AN-v01_01-EN.pdf?fileId=5546d4624e765da5014ed8dd0f4614c0) – Capture compare unit 4 (CCU4) - Provides a detailed introduction to the key features of the CCU4 module
 Code examples  | [Using ModusToolbox&trade; software](https://github.com/Infineon/Code-Examples-for-ModusToolbox-Software) on GitHub
-Device documentation | [XMC4000 family datasheets](https://www.infineon.com/cms/en/product/microcontroller/32-bit-industrial-microcontroller-based-on-arm-cortex-m/32-bit-xmc4000-industrial-microcontroller-arm-cortex-m4/#document-group-myInfineon-49) <br> [XMC4000 family technical reference manuals](https://www.infineon.com/cms/en/product/microcontroller/32-bit-industrial-microcontroller-based-on-arm-cortex-m/32-bit-xmc4000-industrial-microcontroller-arm-cortex-m4/#document-group-myInfineon-44)
-Development kits | [XMC eval boards](https://www.infineon.com/cms/en/product/microcontroller/32-bit-industrial-microcontroller-based-on-arm-cortex-m/#boards)
-Libraries on GitHub  | [mtb-xmclib-cat3](https://github.com/Infineon/mtb-xmclib-cat3) – XMC peripheral library (XMCLib)
-Tools  | [Eclipse IDE for ModusToolbox&trade; software](https://www.cypress.com/modustoolbox) – ModusToolbox&trade; software is a collection of easy-to-use software and tools enabling rapid development with Infineon MCUs, covering applications from embedded sense and control to wireless and cloud-connected systems using AIROC&trade; Wi-Fi and Bluetooth® connectivity devices.
+Device documentation | [XMC4000 MCU family datasheets](https://www.infineon.com/cms/en/product/microcontroller/32-bit-industrial-microcontroller-based-on-arm-cortex-m/32-bit-xmc4000-industrial-microcontroller-arm-cortex-m4/#document-group-myInfineon-49) <br> [XMC4000 MCU family technical reference manuals](https://www.infineon.com/cms/en/product/microcontroller/32-bit-industrial-microcontroller-based-on-arm-cortex-m/32-bit-xmc4000-industrial-microcontroller-arm-cortex-m4/#document-group-myInfineon-44)
+Development kits | [XMC&trade; MCU eval boards](https://www.infineon.com/cms/en/product/microcontroller/32-bit-industrial-microcontroller-based-on-arm-cortex-m/#boards)
+Libraries on GitHub  | [mtb-xmclib-cat3](https://github.com/Infineon/mtb-xmclib-cat3) – XMC&trade; peripheral library (XMCLib)
+Tools  | [Eclipse IDE for ModusToolbox&trade; software](https://www.infineon.com/modustoolbox) – ModusToolbox&trade; software is a collection of easy-to-use software and tools enabling rapid development with Infineon MCUs, covering applications from embedded sense and control to wireless and cloud-connected systems using AIROC&trade; Wi-Fi and Bluetooth&reg; connectivity devices.
 
 
 ## Other resources
 
-Infineon provides a wealth of data at www.infineon.com to help you select the right device, and quickly and effectively integrate it into your design.
+Infineon provides a wealth of data at [www.infineon.com](www.infineon.com) to help you select the right device, and quickly and effectively integrate it into your design.
 
-For XMC&trade; MCU devices, see [32-bit XMC™ industrial microcontroller based on Arm® Cortex®-M](https://www.infineon.com/cms/en/product/microcontroller/32-bit-industrial-microcontroller-based-on-arm-cortex-m/).
+For XMC&trade; MCU devices, see [32-bit XMC&trade; Industrial microcontroller based on Arm® Cortex®-M](https://www.infineon.com/cms/en/product/microcontroller/32-bit-industrial-microcontroller-based-on-arm-cortex-m/).
 
 ## Document history
 
@@ -168,7 +182,8 @@ Document title: *CE232690* - *XMC&trade; MCU: DMA PWM*
 | ------- | --------------------- |
 | 1.0.0   | New code example      |
 | 1.1.0   | Added support for new kits      |
-| 2.0.0   | Updated to support ModusToolbox&trade; software v3.0, CE will not be backward compatible with previous versions of ModusToolbox™ software |
+| 2.0.0   | Updated to support ModusToolbox&trade; software v3.0. This CE is not backward compatible with previous versions of ModusToolbox&trade;software. |
+| 2.1.0   | Added support for DMA personality. |
 ------
 
 All other trademarks or registered trademarks referenced herein are the property of their respective owners.

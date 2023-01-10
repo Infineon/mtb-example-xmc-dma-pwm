@@ -9,7 +9,7 @@
 *
 *******************************************************************************
 *
-* Copyright (c) 2015 - 2021, Infineon Technologies AG
+* Copyright (c) 2015 - 2022, Infineon Technologies AG
 * All rights reserved.
 *
 * Boost Software License - Version 1.0 - August 17th, 2003
@@ -44,19 +44,18 @@
  
 #include "cybsp.h"
 #include "cy_utils.h"
-#include "xmc_dma.h"
-#include "xmc_ccu4.h"
+#include "cy_retarget_io.h"
 
 /*******************************************************************************
 * Macros
 *******************************************************************************/
 
 #define BLOCK_SIZE        48
-#define GPDMA_CHANNEL0    0    /* DMA Channel 0 */
-#define GPDMA_CHANNEL1    1    /* DMA Channel 1 */
 #define TIMER_PERIOD      65535
 #define COMPARE_BLOCK     TIMER_PERIOD/BLOCK_SIZE
 
+/* Define macro to enable/disable printing of debug messages */
+#define ENABLE_XMC_DEBUG_PRINT (0)
 
 /*******************************************************************************
 * Variables
@@ -64,6 +63,14 @@
 
 uint32_t shadow_transfer_enable;
 uint32_t duty_cycles[2][BLOCK_SIZE];
+
+uint32_t *src_ptr = &shadow_transfer_enable;
+
+#if (UC_SERIES == XMC43)
+uint32_t *dst_ptr = (uint32_t *)&(CCU41->GCSS);
+#else
+uint32_t *dst_ptr = (uint32_t *)&(CCU40->GCSS);
+#endif
 
 /* DMA linked list to transfer the data from memory to CCU4 peripheral. 
  * - The block size must be set to the transfer block size defined by the 
@@ -113,59 +120,7 @@ __attribute__((aligned(32))) XMC_DMA_LLI_t dma_ll[2] =
   }
 };
 
-/* DMA channel configuration used to transfer duty cycles using a linked list to
- * achieve double buffering.
- * - The linked list pointer points to the created DMA linked list, dma_ll in
- *   this case.
- * - Transfer type is source address linked destination address linked
- * - The destination address handshaking is hardware as the CCU4 peripheral
- *   instructs the GPDMA to transfer data.
- * - The destination peripheral request is mapped to CCU40
- * - Priority level is set to low priority in this case - lower number equals
- *   lower priority.
- */
-XMC_DMA_CH_CONFIG_t dma_ch0_config =
-{
-  .block_size = BLOCK_SIZE,                                                             /* Transfer Block size */
-  .linked_list_pointer = (XMC_DMA_LLI_t *)&dma_ll[0],                                   /* Linked list pointer */
-  .transfer_flow = XMC_DMA_CH_TRANSFER_FLOW_M2P_DMA,                                    /* DMA Transfer flow */
-  .transfer_type = XMC_DMA_CH_TRANSFER_TYPE_MULTI_BLOCK_SRCADR_LINKED_DSTADR_LINKED,    /* DMA transfer type */
-  .src_handshaking = XMC_DMA_CH_SRC_HANDSHAKING_SOFTWARE,                               /* Source handshaking */
-  .dst_handshaking = XMC_DMA_CH_DST_HANDSHAKING_HARDWARE,                               /* Destination handshaking */
-  .dst_peripheral_request = DMA0_PERIPHERAL_REQUEST_CCU40_SR0_0,                        /* Destination peripheral request */
-  .priority = XMC_DMA_CH_PRIORITY_0,                                                    /* Priority level */
-};
-
-/* DMA channel used to transfer the shadow transfer request. The shadow transfer
- * register needs to be set after every write to shadow register for the compare
- * value to be updated.
- * - The source address is the variable to set the shadow transfer bit in the CCU4
- *   register and the destination is the GCSS register of the CCU40 peripheral.
- * - The source and destination count mode requires no change since the same
- *   data location is written everytime.
- * - The transfer type in this case is reload since we need the same
- *   configuration after every DMA transfer.
- * - The destination handshake is hardware and the peripheral request is mapped
- *   to CCU40 peripheral.
- */
-XMC_DMA_CH_CONFIG_t dma_ch1_config =
-{
-  .block_size = BLOCK_SIZE,                                                             /* Transfer Block size */
-  .src_addr = (uint32_t)&shadow_transfer_enable,                                        /* Source address */
-  .dst_addr = (uint32_t)&CCU40->GCSS,                                                   /* Destination address */
-  .src_transfer_width = XMC_DMA_CH_TRANSFER_WIDTH_32,                                   /* Source transfer width */
-  .dst_transfer_width = XMC_DMA_CH_TRANSFER_WIDTH_32,                                   /* Destination transfer width */
-  .src_address_count_mode = XMC_DMA_CH_ADDRESS_COUNT_MODE_NO_CHANGE,                    /* Source address count mode */
-  .dst_address_count_mode = XMC_DMA_CH_ADDRESS_COUNT_MODE_NO_CHANGE,                    /* Destination address count mode */
-  .src_burst_length = XMC_DMA_CH_BURST_LENGTH_1,                                        /* Source burst length */
-  .dst_burst_length = XMC_DMA_CH_BURST_LENGTH_1,                                        /* Destination burst length */
-  .transfer_flow = XMC_DMA_CH_TRANSFER_FLOW_M2P_DMA,                                    /* DMA Transfer flow */
-  .transfer_type = XMC_DMA_CH_TRANSFER_TYPE_MULTI_BLOCK_SRCADR_RELOAD_DSTADR_RELOAD,    /* DMA transfer type */
-  .src_handshaking = XMC_DMA_CH_SRC_HANDSHAKING_SOFTWARE,                               /* Source handshaking */
-  .dst_handshaking = XMC_DMA_CH_DST_HANDSHAKING_HARDWARE,                               /* Destination handshaking */
-  .dst_peripheral_request = DMA0_PERIPHERAL_REQUEST_CCU40_SR0_0,                        /* Destination peripheral request */
-  .priority = XMC_DMA_CH_PRIORITY_0                                                     /* Priority level */
-};
+XMC_DMA_LLI_t *LLP = &dma_ll[0];
 
 /*******************************************************************************
 * Function Name: main
@@ -181,9 +136,11 @@ XMC_DMA_CH_CONFIG_t dma_ch1_config =
 *  int
 *
 *******************************************************************************/
+
 int main(void)
 {
     cy_rslt_t result;
+    cy_retarget_io_init(CYBSP_DEBUG_UART_HW);
     
     /*Initialize the device and board peripherals */
     result = cybsp_init();
@@ -191,6 +148,11 @@ int main(void)
     {
         CY_ASSERT(0);
     }
+
+    #if ENABLE_XMC_DEBUG_PRINT
+        printf("Init complete\r\n");
+    #endif
+
     for(int i = 0; i < BLOCK_SIZE; i++)
     {
         duty_cycles[0][i] = COMPARE_BLOCK * i ;
@@ -201,25 +163,21 @@ int main(void)
      * bit in the CCU40 GCSS register
      */
     shadow_transfer_enable = CCU4_GCSS_S0SE_Msk;
-    
-    /* Initialize and enable the GPDMA peripheral */
-    XMC_DMA_Init(XMC_DMA0);
-
-    /* Initialize the DMA channels with provided channel configuration */
-    XMC_DMA_CH_Init(XMC_DMA0, GPDMA_CHANNEL0, &dma_ch0_config);
-    XMC_DMA_CH_Init(XMC_DMA0, GPDMA_CHANNEL1, &dma_ch1_config);
 
     /* Enable the DMA channel to initiate transfer */
-    XMC_DMA_CH_Enable(XMC_DMA0, GPDMA_CHANNEL0);
-    XMC_DMA_CH_Enable(XMC_DMA0, GPDMA_CHANNEL1);
-  
+    XMC_DMA_CH_Enable(DMA_CH0_HW, DMA_CH0_NUM);
+    XMC_DMA_CH_Enable(DMA_CH1_HW, DMA_CH1_NUM);
+
     /* Start the PWM */
     XMC_CCU4_SLICE_StartTimer(PWM_0_HW);
   
+    #if ENABLE_XMC_DEBUG_PRINT
+        printf("Timer started\r\n");
+    #endif
+
     /* Placeholder for user application code. The while loop below can be 
      * replaced with user application code. 
      */
     while(1U);
 }
-
 /* [] END OF FILE */
