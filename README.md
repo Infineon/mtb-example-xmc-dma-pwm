@@ -4,7 +4,7 @@ This code example demonstrates the use of DMA double buffering with the PWM bloc
 
 [View this README on GitHub.](https://github.com/Infineon/mtb-example-xmc-dma-pwm)
 
-[Provide feedback on this code example.](https://cypress.co1.qualtrics.com/jfe/form/SV_1NTns53sK2yiljn?Q_EED=eyJVbmlxdWUgRG9jIElkIjoiQ0UyMzI2OTAiLCJTcGVjIE51bWJlciI6IjAwMi0zMjY5MCIsIkRvYyBUaXRsZSI6IlhNQyZ0cmFkZTsgTUNVOiBETUEgUFdNIiwicmlkIjoiYWhhciIsIkRvYyB2ZXJzaW9uIjoiMi4xLjAiLCJEb2MgTGFuZ3VhZ2UiOiJFbmdsaXNoIiwiRG9jIERpdmlzaW9uIjoiTUNEIiwiRG9jIEJVIjoiSUNXIiwiRG9jIEZhbWlseSI6Ik4vQSJ9)
+[Provide feedback on this code example.](https://cypress.co1.qualtrics.com/jfe/form/SV_1NTns53sK2yiljn?Q_EED=eyJVbmlxdWUgRG9jIElkIjoiQ0UyMzI2OTAiLCJTcGVjIE51bWJlciI6IjAwMi0zMjY5MCIsIkRvYyBUaXRsZSI6IlhNQyZ0cmFkZTsgTUNVOiBETUEgUFdNIiwicmlkIjoibmlndWRrYXIiLCJEb2MgdmVyc2lvbiI6IjIuMS4xIiwiRG9jIExhbmd1YWdlIjoiRW5nbGlzaCIsIkRvYyBEaXZpc2lvbiI6Ik1DRCIsIkRvYyBCVSI6IklDVyIsIkRvYyBGYW1pbHkiOiJOL0EifQ==)
 
 ## Requirements
 
@@ -16,8 +16,6 @@ This code example demonstrates the use of DMA double buffering with the PWM bloc
 ## Supported toolchains (make variable 'TOOLCHAIN')
 
 - GNU Arm&reg; embedded compiler v10.3.1 (`GCC_ARM`) - Default value of `TOOLCHAIN`
-- Arm&reg; compiler v6.16 (`ARM`)
-- IAR C/C++ compiler v9.30.1 (`IAR`)
 
 ## Supported kits (make variable 'TARGET')
 
@@ -184,6 +182,7 @@ Document title: *CE232690* - *XMC&trade; MCU: DMA PWM*
 | 1.1.0   | Added support for new kits      |
 | 2.0.0   | Updated to support ModusToolbox&trade; software v3.0. This CE is not backward compatible with previous versions of ModusToolbox&trade;software. |
 | 2.1.0   | Added support for DMA personality. |
+| 2.1.1   | Updated README        |
 ------
 
 All other trademarks or registered trademarks referenced herein are the property of their respective owners.
